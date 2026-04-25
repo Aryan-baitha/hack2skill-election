@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Essential meta tags for SEO and responsiveness -->
+    <meta name="description" content="Matdaan Mitra 🇮🇳 (मतदान मित्र) - A highly interactive, accessible educational tool simulating the EVM and VVPAT voting experience.">
+    <title>Matdaan Mitra 🇮🇳 (मतदान मित्र)</title>
+    
+    <!-- PWA Manifest & Theme -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e3a8a">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzFlM2E4YSIvPjx0ZXh0IHg9IjUwIiB5PSI2NSIgZm9udC1zaXplPSI1MCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiNmZmYiPlY8L3RleHQ+PC9zdmc+">
+    
+    <!-- Tailwind CSS via CDN for styling layout and basic elements -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom CSS for the EVM and VVPAT machine visualizations & animations -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans min-h-screen flex flex-col">
+
+    <!-- Accessible Header with Language Toggle Placeholder -->
+    <header class="bg-blue-900 text-white p-4 shadow-md flex justify-between items-center z-10 sticky top-0">
+        <div class="flex items-center space-x-3">
+            <!-- VoteSync Logo Placeholder -->
+            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center font-bold" aria-hidden="true">V</div>
+            <h1 class="text-2xl font-bold tracking-wide">Matdaan Mitra 🇮🇳 <span class="text-blue-300 text-sm font-normal" data-i18n="appSubtitle">(मतदान मित्र)</span></h1>
+        </div>
+        
+        <!-- Language Toggle Placeholder demonstrating inclusive design -->
+        <nav aria-label="Language selection" class="flex items-center space-x-4">
+            <button id="privacy-toggle-btn" class="text-blue-100 hover:text-white focus:outline-none flex flex-col items-center justify-center transition" aria-label="Toggle Privacy Mode">
+                <span class="text-lg">👁️</span>
+                <span class="text-[10px] uppercase font-bold">Privacy</span>
+            </button>
+            <ul class="flex space-x-2 bg-blue-800 rounded-lg p-1">
+                <li>
+                    <button class="lang-btn px-3 py-1 bg-white text-blue-900 font-semibold rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300" data-lang="en" aria-pressed="true" aria-label="Switch to English">EN</button>
+                </li>
+                <li>
+                    <button class="lang-btn px-3 py-1 text-blue-100 hover:text-white font-medium rounded focus:outline-none focus:ring-2 focus:ring-blue-300" data-lang="hi" aria-pressed="false" aria-label="Switch to Hindi">HI</button>
+                </li>
+                <li>
+                    <button class="lang-btn px-3 py-1 text-blue-100 hover:text-white font-medium rounded focus:outline-none focus:ring-2 focus:ring-blue-300" data-lang="bn" aria-pressed="false" aria-label="Switch to Bengali">BN</button>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content Area: Two-Column Layout -->
+    <main id="main-content" class="flex-grow flex flex-col md:flex-row max-w-7xl mx-auto w-full p-4 gap-6 transition-[filter] duration-300">
+        
+        <!-- Left Panel: Assistant Console -->
+        <aside class="md:w-1/3 flex flex-col gap-4" aria-labelledby="assistant-heading">
+            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 flex-grow flex flex-col">
+                <h2 id="assistant-heading" class="text-xl font-bold text-blue-800 mb-4 border-b pb-2 flex items-center justify-between">
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span data-i18n="assistantTitle">Assistant Console</span>
+                    </div>
+                    <button id="voice-mode-btn" type="button" class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded border border-purple-200 hover:bg-purple-200 transition focus:outline-none" aria-label="Toggle Voice Voting Mode" data-i18n="voiceMode">Voice Mode 🎙️</button>
+                </h2>
+
+                <!-- Live Bharat Pledge Counter -->
+                <div class="px-3 py-2 bg-red-50 rounded border border-red-100 flex items-center justify-center mb-3">
+                    <span class="relative flex h-2 w-2 mr-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                    </span>
+                    <span class="text-[10px] font-bold text-red-700 uppercase tracking-wide">
+                        Live: <span id="pledge-counter">14,502</span> voters pledged from 400 cities
+                    </span>
+                </div>
+                
+                <!-- Chat Messages Area -->
+                <div id="chat-messages" class="flex-grow overflow-y-auto mb-4 space-y-3 pr-2 text-sm flex flex-col" aria-live="polite">
+                    <!-- Dynamic chat messages go here -->
+                </div>
+
+                <!-- Chat Input Area -->
+                <div class="border-t pt-3 mt-auto">
+                    <form id="chat-form" class="flex gap-2 relative mb-2">
+                        <button type="button" id="mic-btn" class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-600 focus:outline-none transition" aria-label="Voice Input">🎙️</button>
+                        <label for="chat-input" class="sr-only">Type a message</label>
+                        <input type="text" id="chat-input" class="flex-grow border border-gray-300 rounded-lg pl-8 pr-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="Type or speak a message..." aria-label="Type your message" data-i18n-placeholder="chatPlaceholder">
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" data-i18n="sendBtn">Send</button>
+                    </form>
+                    <!-- 1-Tap ECI SOS / Report Issue -->
+                    <div class="flex gap-2 w-full pt-1">
+                        <a href="tel:1950" class="flex-1 bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-lg text-center flex items-center justify-center gap-1 hover:bg-red-700 transition" aria-label="Call ECI SOS">
+                            🚨 SOS Call
+                        </a>
+                        <a href="sms:1950?body=Emergency%20at%20my%20polling%20booth.%20Need%20assistance." class="flex-1 bg-red-50 text-red-700 border border-red-200 text-[11px] font-bold py-2 px-2 rounded-lg text-center flex items-center justify-center gap-1 hover:bg-red-100 transition" aria-label="SMS ECI SOS">
+                            💬 SOS SMS
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Panel: The Sandbox (Interactive Simulators) -->
+        <section class="md:w-2/3 flex flex-col gap-6 justify-center items-center lg:items-stretch relative" aria-labelledby="sandbox-heading">
+            <h2 id="sandbox-heading" class="sr-only">Interactive EVM and VVPAT Simulator</h2>
+
+            <!-- Simulator Wrapper -->
+            <div id="simulator-container" class="flex flex-col lg:flex-row gap-6 justify-center items-center lg:items-stretch w-full transition-opacity duration-300 relative">
+                
+                <!-- Mock Biometric Lock Overlay (Robust Rewrite) -->
+                <button id="biometric-overlay" class="absolute inset-0 w-full h-full bg-white/95 backdrop-blur-md z-50 flex flex-col items-center justify-center rounded-xl border border-gray-200 transition-opacity duration-500 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-500 m-0 p-0 shadow-2xl" aria-label="Tap anywhere to verify identity">
+                    <div class="relative w-24 h-24 flex items-center justify-center mb-4">
+                        <!-- Fingerprint SVG Icon -->
+                        <svg class="w-20 h-20 text-blue-500 transition duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 9a2 2 0 00-2 2v2a2 2 0 104 0v-2a2 2 0 00-2-2z"></path>
+                            <path d="M12 5a6 6 0 00-6 6v3a6 6 0 1012 0v-3a6 6 0 00-6-6z"></path>
+                            <path d="M12 1a10 10 0 00-10 10v4a10 10 0 1020 0v-4A10 10 0 0012 1z"></path>
+                        </svg>
+                        <div class="absolute top-0 left-0 w-full h-1 bg-green-500 shadow-[0_0_15px_#22c55e] hidden" id="scan-line"></div>
+                    </div>
+                    <p class="font-bold text-gray-800 tracking-widest text-lg" id="biometric-text">TAP TO VERIFY IDENTITY</p>
+                    <p class="text-xs text-gray-500 mt-2 font-medium">Required before voting</p>
+                </button>
+
+                <!-- EVM Machine Simulator -->
+                <div class="evm-machine w-full max-w-sm rounded-xl p-4 flex flex-col h-full relative" aria-label="Electronic Voting Machine">
+                
+                <!-- EVM Header -->
+                <div class="bg-gray-800 text-white text-center py-2 px-4 rounded-t-lg mb-4 shadow-inner">
+                    <h3 class="font-bold tracking-wider text-sm" data-i18n="evmTitle">ELECTRONIC VOTING MACHINE</h3>
+                    <p class="text-xs text-gray-400" data-i18n="evmSubtitle">BALLOT UNIT</p>
+                </div>
+
+                <!-- EVM Candidates List -->
+                <div class="flex-grow bg-white border border-gray-300 rounded shadow-inner p-2 space-y-2">
+                    
+                    <!-- EVM Column Headers -->
+                    <div class="flex text-[11px] font-bold text-gray-500 pb-1 border-b border-gray-200">
+                        <div class="w-10 text-center">S.No</div>
+                        <div class="flex-grow">Candidate Name</div>
+                        <div class="w-20 text-center">Symbol</div>
+                        <div class="w-20 text-center pr-1">Action</div>
+                    </div>
+
+                    <!-- Candidate A Row -->
+                    <div class="candidate-row flex items-center bg-gray-50 border border-gray-200 rounded p-2 transition hover:bg-gray-100">
+                        <div class="w-10 text-center font-bold text-gray-700" aria-hidden="true">1</div>
+                        <div class="flex-grow font-semibold text-base text-gray-800">Candidate A</div>
+                        <div class="w-20 flex justify-center items-center">
+                            <!-- Dummy Symbol 1 -->
+                            <div class="w-8 h-8 bg-green-200 rounded-full flex justify-center items-center shadow-sm text-sm" aria-hidden="true">🍎</div>
+                        </div>
+                        <div class="w-20 flex items-center justify-between pl-2">
+                            <!-- LED indicator (Red light when voted) -->
+                            <div class="led-indicator w-3 h-3 rounded-full" aria-label="Voting indicator light"></div>
+                            <!-- Blue Voting Button -->
+                            <button class="evm-vote-btn evm-button w-10 h-10 rounded-full flex-shrink-0 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-1" 
+                                    data-candidate="Candidate A" data-symbol="🍎" data-serial="1"
+                                    aria-label="Vote for Candidate A">
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Candidate B Row -->
+                    <div class="candidate-row flex items-center bg-gray-50 border border-gray-200 rounded p-2 transition hover:bg-gray-100">
+                        <div class="w-10 text-center font-bold text-gray-700" aria-hidden="true">2</div>
+                        <div class="flex-grow font-semibold text-base text-gray-800">Candidate B</div>
+                        <div class="w-20 flex justify-center items-center">
+                            <!-- Dummy Symbol 2 -->
+                            <div class="w-8 h-8 bg-purple-200 rounded-sm flex justify-center items-center shadow-sm text-sm" aria-hidden="true">☂️</div>
+                        </div>
+                        <div class="w-20 flex items-center justify-between pl-2">
+                            <div class="led-indicator w-3 h-3 rounded-full" aria-label="Voting indicator light"></div>
+                            <button class="evm-vote-btn evm-button w-10 h-10 rounded-full flex-shrink-0 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-1"
+                                    data-candidate="Candidate B" data-symbol="☂️" data-serial="2"
+                                    aria-label="Vote for Candidate B">
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Candidate C Row -->
+                    <div class="candidate-row flex items-center bg-gray-50 border border-gray-200 rounded p-2 transition hover:bg-gray-100">
+                        <div class="w-10 text-center font-bold text-gray-700" aria-hidden="true">3</div>
+                        <div class="flex-grow font-semibold text-base text-gray-800">Candidate C</div>
+                        <div class="w-20 flex justify-center items-center">
+                            <div class="w-8 h-8 bg-yellow-200 rounded-full flex justify-center items-center shadow-sm text-sm" aria-hidden="true">🚲</div>
+                        </div>
+                        <div class="w-20 flex items-center justify-between pl-2">
+                            <div class="led-indicator w-3 h-3 rounded-full" aria-label="Voting indicator light"></div>
+                            <button class="evm-vote-btn evm-button w-10 h-10 rounded-full flex-shrink-0 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-1"
+                                    data-candidate="Candidate C" data-symbol="🚲" data-serial="3"
+                                    aria-label="Vote for Candidate C">
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Candidate D Row -->
+                    <div class="candidate-row flex items-center bg-gray-50 border border-gray-200 rounded p-2 transition hover:bg-gray-100">
+                        <div class="w-10 text-center font-bold text-gray-700" aria-hidden="true">4</div>
+                        <div class="flex-grow font-semibold text-base text-gray-800">Candidate D</div>
+                        <div class="w-20 flex justify-center items-center">
+                            <div class="w-8 h-8 bg-pink-200 rounded-sm flex justify-center items-center shadow-sm text-sm" aria-hidden="true">🐘</div>
+                        </div>
+                        <div class="w-20 flex items-center justify-between pl-2">
+                            <div class="led-indicator w-3 h-3 rounded-full" aria-label="Voting indicator light"></div>
+                            <button class="evm-vote-btn evm-button w-10 h-10 rounded-full flex-shrink-0 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-1"
+                                    data-candidate="Candidate D" data-symbol="🐘" data-serial="4"
+                                    aria-label="Vote for Candidate D">
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Candidate E Row -->
+                    <div class="candidate-row flex items-center bg-gray-50 border border-gray-200 rounded p-2 transition hover:bg-gray-100">
+                        <div class="w-10 text-center font-bold text-gray-700" aria-hidden="true">5</div>
+                        <div class="flex-grow font-semibold text-base text-gray-800">Candidate E</div>
+                        <div class="w-20 flex justify-center items-center">
+                            <div class="w-8 h-8 bg-blue-200 rounded-full flex justify-center items-center shadow-sm text-sm" aria-hidden="true">🌻</div>
+                        </div>
+                        <div class="w-20 flex items-center justify-between pl-2">
+                            <div class="led-indicator w-3 h-3 rounded-full" aria-label="Voting indicator light"></div>
+                            <button class="evm-vote-btn evm-button w-10 h-10 rounded-full flex-shrink-0 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-1"
+                                    data-candidate="Candidate E" data-symbol="🌻" data-serial="5"
+                                    aria-label="Vote for Candidate E">
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Candidate F Row -->
+                    <div class="candidate-row flex items-center bg-gray-50 border border-gray-200 rounded p-2 transition hover:bg-gray-100">
+                        <div class="w-10 text-center font-bold text-gray-700" aria-hidden="true">6</div>
+                        <div class="flex-grow font-semibold text-base text-gray-800">Candidate F</div>
+                        <div class="w-20 flex justify-center items-center">
+                            <div class="w-8 h-8 bg-orange-200 rounded-sm flex justify-center items-center shadow-sm text-sm" aria-hidden="true">⚽</div>
+                        </div>
+                        <div class="w-20 flex items-center justify-between pl-2">
+                            <div class="led-indicator w-3 h-3 rounded-full" aria-label="Voting indicator light"></div>
+                            <button class="evm-vote-btn evm-button w-10 h-10 rounded-full flex-shrink-0 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-1"
+                                    data-candidate="Candidate F" data-symbol="⚽" data-serial="6"
+                                    aria-label="Vote for Candidate F">
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- NOTA Row -->
+                    <div class="candidate-row flex items-center bg-gray-50 border border-gray-200 rounded p-2 transition hover:bg-gray-100">
+                        <div class="w-10 text-center font-bold text-gray-700" aria-hidden="true">7</div>
+                        <div class="flex-grow font-bold text-base text-red-600">NOTA</div>
+                        <div class="w-20 flex justify-center items-center">
+                            <!-- NOTA Symbol -->
+                            <div class="w-8 h-8 border-2 border-red-500 rounded-full flex justify-center items-center text-red-500 shadow-sm text-xs font-bold" aria-hidden="true">✕</div>
+                        </div>
+                        <div class="w-20 flex items-center justify-between pl-2">
+                            <div class="led-indicator w-3 h-3 rounded-full" aria-label="Voting indicator light"></div>
+                            <button class="evm-vote-btn evm-button w-10 h-10 rounded-full flex-shrink-0 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-1"
+                                    data-candidate="NOTA" data-symbol="✕" data-serial="7"
+                                    aria-label="Vote for None of the Above (NOTA)">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EVM Footer / Power Indicator -->
+                <div class="flex justify-between items-end mt-4 pt-2 border-t border-gray-300 px-2">
+                    <div class="w-4 h-4 bg-green-500 rounded-full shadow" aria-label="Ready indicator green light"></div>
+                    <div class="text-[10px] text-gray-500 uppercase tracking-widest font-mono">EVM-MK3</div>
+                </div>
+            </div>
+
+            <!-- VVPAT Simulator -->
+            <div class="vvpat-machine w-full max-w-sm lg:w-64 rounded-xl p-4 flex flex-col h-full shadow-lg relative overflow-hidden" aria-label="Voter Verifiable Paper Audit Trail Machine">
+                
+                <!-- VVPAT Header -->
+                <div class="text-center mb-6">
+                    <h3 class="font-bold text-gray-800 border-b border-gray-400 inline-block pb-1">VVPAT</h3>
+                    <p class="text-[10px] text-gray-600 uppercase mt-1" data-i18n="vvpatTitle">Voter Verifiable Paper Audit Trail</p>
+                </div>
+
+                <!-- VVPAT Glass Window -->
+                <div class="vvpat-window flex-grow rounded-lg mx-auto w-48 h-64 border-[6px] border-gray-800 shadow-inner flex flex-col relative" aria-label="VVPAT Verification Window">
+                    
+                    <!-- Paper Slip (Animated element controlled by CSS and JS) -->
+                    <div id="vvpat-slip" class="vvpat-slip flex flex-col justify-center items-center z-10" aria-live="polite" aria-atomic="true">
+                        <div class="border-b-2 border-dashed border-gray-400 w-full pb-2 mb-2 text-center">
+                            <span id="vvpat-serial-number" class="font-bold text-sm"></span>
+                        </div>
+                        <div id="vvpat-candidate-name" class="font-bold text-lg mb-2 truncate w-full text-center"></div>
+                        <div id="vvpat-candidate-symbol" class="text-3xl mb-2 h-10 flex items-center justify-center"></div>
+                        <div class="text-[10px] text-gray-500 uppercase mt-2 font-bold">Verified</div>
+                    </div>
+
+                    <!-- Glass overlay reflection effect -->
+                    <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-white/40 pointer-events-none z-20"></div>
+                </div>
+
+                <!-- Output Box (Where the slip falls, conceptually) -->
+                <div class="mt-4 bg-gray-800 h-12 rounded-b-lg shadow-inner flex items-center justify-center relative overflow-hidden">
+                    <div class="w-3/4 h-2 bg-black rounded-full shadow-inner"></div>
+                    <div class="absolute bottom-1 right-2 text-[8px] text-gray-500" data-i18n="sealedBox">SEALED DROP BOX</div>
+                </div>
+                
+                <!-- Share Certificate UI (Hidden initially) -->
+                <div id="share-cert-ui" class="hidden absolute bottom-20 left-0 right-0 mx-4 bg-green-50 border border-green-200 rounded p-3 text-center shadow-lg z-20 animate-fade-in">
+                    <p class="text-xs font-bold text-green-800 mb-2">Vote Successfully Cast!</p>
+                    <button id="share-pledge-btn" class="bg-green-600 text-white text-xs px-3 py-1.5 rounded shadow hover:bg-green-700 transition w-full font-bold flex items-center justify-center gap-1 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                        Share My Pledge
+                    </button>
+                </div>
+                
+                <!-- Printing mechanism status indicators -->
+                <div class="flex justify-between items-end mt-4 px-2">
+                    <div class="flex space-x-2">
+                        <div class="w-2 h-2 bg-red-500 rounded-full opacity-30" aria-label="Error indicator light (Off)"></div>
+                        <div class="w-2 h-2 bg-green-500 rounded-full shadow-sm" aria-label="Ready indicator light (On)"></div>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <!-- Google Maps Placeholder (Hidden by default) -->
+            <div id="maps-container" class="hidden absolute inset-0 bg-white rounded-xl shadow-lg border border-gray-200 p-4 flex flex-col z-20">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-gray-800">Your Polling Station</h3>
+                    <button id="close-maps-btn" class="text-gray-500 hover:text-red-500 transition focus:outline-none p-1 rounded" aria-label="Close Map">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                <div class="flex-grow bg-gray-100 rounded-lg overflow-hidden relative">
+                    <!-- Google Maps Iframe Placeholder (Using standard generic Delhi embed as dummy) -->
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14008.11482718424!2d77.2065321689258!3d28.613939100000003!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfd5b34cb53d1%3A0xcab57e0cc1951563!2sNew%20Delhi%2C%20Delhi!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
+                        width="100%" 
+                        height="100%" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+
+            <!-- AR Compass Placeholder (Hidden by default) -->
+            <div id="ar-compass-container" class="hidden absolute inset-0 bg-white rounded-xl shadow-lg border border-gray-200 p-6 flex flex-col items-center justify-center z-20">
+                <button id="close-compass-btn" class="absolute top-4 right-4 text-gray-500 hover:text-red-500 transition focus:outline-none p-1 rounded" aria-label="Close Compass">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                <h3 class="font-bold text-gray-800 mb-2">AR Booth Locator</h3>
+                <p class="text-xs text-gray-500 mb-8 text-center" id="compass-status">Calibrating compass...</p>
+                
+                <div class="compass-container w-48 h-48 relative flex justify-center items-center rounded-full border-4 border-blue-100 bg-gray-50 shadow-inner">
+                    <!-- North indicator -->
+                    <div class="absolute top-2 text-xs font-bold text-red-500">N</div>
+                    
+                    <!-- SVG Arrow -->
+                    <div id="compass-arrow" class="compass-arrow w-32 h-32 flex justify-center items-center">
+                        <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-md">
+                            <path d="M50 10 L80 90 L50 70 L20 90 Z" fill="#3b82f6" stroke="#1e3a8a" stroke-width="2"/>
+                            <path d="M50 10 L80 90 L50 70 Z" fill="#60a5fa"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="mt-8 text-center">
+                    <p class="text-sm font-bold text-blue-800" id="compass-distance">Distance: -- m</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 border-t border-gray-200 py-4 mt-auto no-print">
+        <div class="max-w-7xl mx-auto px-4 text-center text-sm text-gray-500">
+            <p>&copy; 2026 Matdaan Mitra Team. Designed for educational purposes.</p>
+        </div>
+    </footer>
+
+    <!-- Voter Passport Container (Hidden by default, styled for print) -->
+    <div id="voter-passport-container" class="hidden fixed inset-0 bg-gray-900 bg-opacity-80 z-40 flex flex-col items-center justify-center p-4">
+        <div id="passport-content" class="w-full max-w-sm border-4 border-double border-blue-900 p-6 rounded-lg bg-white relative overflow-hidden shadow-2xl">
+            <!-- Background watermark -->
+            <div class="absolute inset-0 opacity-5 pointer-events-none flex items-center justify-center">
+                <span class="text-[150px]">🇮🇳</span>
+            </div>
+            <div class="relative z-10 text-center">
+                <h2 class="text-2xl font-bold text-blue-900 mb-2 uppercase tracking-widest border-b-2 border-blue-200 pb-2">Voter Passport</h2>
+                <div class="my-6">
+                    <div class="w-24 h-24 bg-gray-100 rounded-full mx-auto mb-3 border-4 border-blue-500 flex items-center justify-center text-4xl shadow-inner relative overflow-hidden" id="selfie-container">
+                        <span id="selfie-placeholder">👤</span>
+                        <video id="selfie-video" class="hidden absolute inset-0 w-full h-full object-cover" autoplay playsinline></video>
+                        <img id="selfie-img" class="hidden absolute inset-0 w-full h-full object-cover" alt="Voter Selfie">
+                    </div>
+                    <canvas id="selfie-canvas" class="hidden"></canvas>
+                    <p class="font-bold text-xl text-gray-800" id="passport-name">Proud Indian Voter</p>
+                </div>
+                <p class="text-sm italic text-gray-700 mb-6 bg-blue-50 p-4 rounded shadow-sm border border-blue-100">"I pledge to uphold the democratic traditions of my country and to vote in every election fearlessly and without being influenced by religion, race, caste, community, language, or any inducement."</p>
+                <div class="flex justify-between items-center text-xs font-bold text-gray-500 uppercase border-t-2 border-blue-200 pt-3">
+                    <span>Issued: <span id="passport-date"></span></span>
+                    <span class="text-blue-600">Matdaan Mitra Verified ✓</span>
+                </div>
+            </div>
+        </div>
+        <div class="mt-6 flex flex-wrap justify-center gap-4 no-print z-50">
+            <button id="start-selfie-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-blue-700 transition font-bold focus:outline-none focus:ring-4 focus:ring-blue-300">📸 Take Voter Selfie</button>
+            <button id="capture-selfie-btn" class="hidden bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-red-700 transition font-bold focus:outline-none focus:ring-4 focus:ring-red-300">🔴 Capture</button>
+            <button id="share-selfie-btn" class="hidden bg-purple-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-purple-700 transition font-bold focus:outline-none focus:ring-4 focus:ring-purple-300">🔗 Share Selfie</button>
+            <button id="save-pdf-btn" class="bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg hover:bg-green-700 transition font-bold focus:outline-none focus:ring-4 focus:ring-green-300">📄 Save as PDF</button>
+            <button id="close-passport-btn" class="bg-gray-200 text-gray-800 px-6 py-2 rounded-lg shadow-lg hover:bg-gray-300 transition font-bold focus:outline-none focus:ring-4 focus:ring-gray-300">Close</button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-container" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-4 py-2 rounded shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none z-50">
+        <span id="toast-msg"></span>
+    </div>
+
+    <!-- Main application logic -->
+    <script src="app.js"></script>
+</body>
+</html>
