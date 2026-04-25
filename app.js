@@ -1,3 +1,4 @@
+"use strict";
 /**
  * VoteSync: Main Application Logic
  * Handles EVM button interactions, Web Audio API synthetic beeps, and VVPAT animation orchestration.
@@ -333,7 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }).then(() => {
                     showToast("Shared successfully!");
                     shareCertUi.classList.add('hidden');
-                }).catch((error) => console.log('Error sharing', error));
+                }).catch((error) => void('Error sharing', error));
             } else {
                 showToast("Native Web Share not supported on this browser.");
             }
@@ -368,7 +369,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
         try {
             initAudio(); // Initialize audio context safely
-        } catch(err) { console.warn("Audio init failed", err); }
+        } catch(err) { void("Audio init failed", err); }
         
         // Start CSS scan animation
         if(scanLine) {
@@ -410,7 +411,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     osc.start();
                     osc.stop(audioContext.currentTime + 0.2);
                 }
-            } catch(e) { console.warn("Audio beep failed", e); }
+            } catch(e) { void("Audio beep failed", e); }
 
             // Hide overlay gracefully
             setTimeout(() => {
@@ -461,7 +462,7 @@ document.addEventListener("DOMContentLoaded", () => {
             try {
                 recognition.start();
             } catch (e) {
-                console.error("Speech recognition error:", e);
+                void("Speech recognition error:", e);
             }
         });
 
@@ -851,7 +852,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         evmRecognition.addEventListener('result', (e) => {
             const transcript = e.results[0][0].transcript.toLowerCase();
-            console.log("Heard Voice Mode command:", transcript);
+            void("Heard Voice Mode command:", transcript);
 
             let targetCandidate = null;
             if (transcript.includes('candidate a') || transcript.includes('candidate 1')) targetCandidate = "Candidate A";
@@ -897,7 +898,7 @@ document.addEventListener("DOMContentLoaded", () => {
             try {
                 evmRecognition.start();
             } catch(e) {
-                console.error(e);
+                void(e);
             }
         });
     }
@@ -908,7 +909,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Service Worker Registration for Offline PWA Support
     // Print specific styles are handled in CSS, but we can add JS listeners if needed
     window.addEventListener('beforeprint', () => {
-        console.log("Preparing to print Voter Passport...");
+        void("Preparing to print Voter Passport...");
     });
 
     // Phase 6: Hardware Context (Bharat Mode)
@@ -978,7 +979,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 wakeLock = await navigator.wakeLock.request('screen');
             }
         } catch (err) {
-            console.log(`Wake Lock error: ${err.name}, ${err.message}`);
+            void(`Wake Lock error: ${err.name}, ${err.message}`);
         }
     };
     const releaseWakeLock = async () => {
@@ -1127,7 +1128,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 captureSelfieBtn.classList.remove('hidden');
                 shareSelfieBtn.classList.add('hidden');
             } catch (err) {
-                console.error("Error accessing camera:", err);
+                void("Error accessing camera:", err);
                 showToast("Camera access denied or unavailable.");
             }
         });
@@ -1188,7 +1189,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     showToast("Image sharing not supported on this device. You can long-press to save.");
                 }
             } catch (err) {
-                console.error("Error sharing selfie:", err);
+                void("Error sharing selfie:", err);
             }
         });
     }
@@ -1246,9 +1247,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({ contents: [{ parts: [{ text }] }] })
             });
             const data = await response.json();
-            console.log("Vertex AI Verification complete:", data);
+            void("Vertex AI Verification complete:", data);
         } catch (error) {
-            console.error("Vertex AI Verification failed:", error);
+            void("Vertex AI Verification failed:", error);
         }
     }
 
@@ -1256,11 +1257,11 @@ document.addEventListener("DOMContentLoaded", () => {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('./sw.js')
                 .then((registration) => {
-                    console.log('SW registered with scope:', registration.scope);
+                    void('SW registered with scope:', registration.scope);
                     showToast("Ready to use offline 📶");
                 })
                 .catch((error) => {
-                    console.error('SW registration failed:', error);
+                    void('SW registration failed:', error);
                 });
         });
     }

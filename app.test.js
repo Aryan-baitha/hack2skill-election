@@ -68,9 +68,7 @@ const tests = {
                     body: JSON.stringify({ contents: [{ parts: [{ text }] }] })
                 });
                 await response.json();
-            } catch (error) {
-                // Ignore
-            }
+            } catch (error) { return; }
         }
 
         await verifyWithVertexAI("Test claim");
