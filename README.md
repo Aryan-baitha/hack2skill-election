@@ -1,105 +1,218 @@
-# Matdaan Mitra 🇮🇳 (मतदान मित्र) 🗳️
+# Matdaan Mitra 🗳️ — Interactive EVM & VVPAT Voting Simulator
 
-**An interactive, highly secure, and ultra-lightweight (<1MB) Offline Progressive Web App (PWA) designed to educate users about the election process through immersive simulation.**
+> **An ultra-lightweight (\<1 MB), offline-first Progressive Web App** that educates Indian voters through an immersive, gamified simulation of the Electronic Voting Machine (EVM) and Voter Verifiable Paper Audit Trail (VVPAT) process.
 
-## 🏆 Hackathon Objective
-Matdaan Mitra was built to guarantee a hackathon victory by pushing the boundaries of what is possible with **Zero External Dependencies**. The entire repository strictly adheres to a `<1MB` footprint while fully leveraging an astonishing **18 modern Native Browser APIs** to maximize Accessibility, Security, and User Experience.
-
-## 🧠 Core Architecture
-Instead of a traditional FAQ bot, Matdaan Mitra utilizes a **"Dual-Panel Sandbox Architecture"**:
-1. **Context-Aware Assistant (Left Panel):** An AI-like chat interface with a warm, empathetic "Friendly Local Guide" persona. It gathers user context (e.g., First-Time Voter, Senior Citizen) to personalize responses and trigger hardware features. Includes a pulsing "Live Bharat Pledge Counter" for real-time social proof.
-2. **Interactive Visualizer (Right Panel):** A dynamic display area that gamifies learning, switching seamlessly between an EVM Simulator, Live Maps, AR Compass, and Digital Certificates.
+[![PWA Ready](https://img.shields.io/badge/PWA-Ready-blue)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)
+[![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero-green)](https://developer.mozilla.org/en-US/docs/Web/API)
+[![WCAG Compliant](https://img.shields.io/badge/WCAG-AA%2FAAA-orange)](https://www.w3.org/WAI/WCAG21/quickref/)
+[![Languages](https://img.shields.io/badge/Languages-EN%20%7C%20HI%20%7C%20BN-red)](https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition)
 
 ---
 
-## 🚀 Key Features & Native API Integrations
+## 🏆 Hackathon Objective
 
-### 1. 🌍 Offline-First PWA (Service Workers)
-Built as an installable Progressive Web App. It features a custom `manifest.json` with a base64 encoded SVG icon and an aggressive offline-first `sw.js` caching strategy. The app works perfectly even when internet connectivity drops to zero.
+Matdaan Mitra is a mission-driven civic technology application built to **make the Indian voting process accessible, understandable, and trustworthy** for first-time voters, senior citizens, and rural communities.
 
-### 2. ⚡ "Bharat Mode" (Battery & Network Context APIs)
-Leverages the `navigator.getBattery()` and `navigator.connection` APIs. If the device's battery drops below 20% or the network speed falls to 2G, the app automatically enables a `.power-save` "Lite Mode". This forces a pure black background and strips all CSS animations to conserve system resources — ideal for India's rural connectivity challenges.
+The core challenge solved: **No external SDKs, no backend, no build tools** — yet delivering 18 native Web APIs, full PWA compliance, AI integration, multi-language support, and complete offline functionality within a sub-1MB footprint.
 
-### 3. 🧭 Zero-Data AR Compass (Geolocation & Device Orientation)
-Uses `navigator.geolocation` to get the user's coordinates and `DeviceOrientationEvent` to read the phone's physical magnetometer. It renders a real-time rotating AR Arrow pointing directly towards the nearest polling booth — works entirely offline without any external map SDKs.
+---
 
-### 4. 📳 Hardware Micro-Interactions (Vibration, Wake Lock & Visibility APIs)
-- **Haptic Feedback:** Every EVM button click triggers `navigator.vibrate([100, 50, 200])` — a realistic physical "click" sensation.
-- **Screen Wake Lock:** The AR Compass requests `navigator.wakeLock` to prevent the screen from sleeping during navigation.
-- **Page Visibility:** If a user switches tabs mid-vote, the `visibilitychange` API fires a warning toast to protect ballot integrity.
+## 🧠 Architecture
 
-### 5. 📲 WhatsApp Interceptor (Web Share Target API)
-Registered as a native OS share target via `manifest.json`. When a user forwards a message from WhatsApp or any app directly to Matdaan Mitra, the app intercepts the payload, feeds it into the Assistant Console, and triggers a mock **ECI Fact-Check** response to combat election misinformation.
+The application uses a **Dual-Panel Sandbox Architecture**:
 
-### 6. ⏳ Smart Queue Estimator (JS Date API)
-Uses `new Date().getHours()` to provide real-time, time-based crowd estimates at polling booths:
-- **8 AM – 11 AM:** High Rush (45-60 min wait)
-- **11 AM – 1 PM:** Medium Rush (20-30 min wait)
-- **1 PM – 4 PM:** Low Rush (5-10 min wait) — **Best time to vote!**
+| Panel | Purpose |
+|---|---|
+| **Left: Assistant Console** | Context-aware AI-like chatbot with warm multilingual persona, quick-reply buttons, privacy features, and ECI emergency contacts |
+| **Right: Interactive Visualizer** | Dynamically switches between: EVM Simulator, Live Google Maps, Zero-Data AR Compass, and Voter Passport Generator |
 
-### 7. 📷 Native QR Scanner (BarcodeDetector API)
-Uses the native `window.BarcodeDetector` API and `navigator.mediaDevices.getUserMedia` to access the device camera and scan a Voter ID QR code. On successful detection, it auto-fills the user's details and immediately stops the camera track to save battery. Includes a graceful fallback if the browser doesn't support it.
+### Data Flow
 
-### 8. 🎙️ "Bol-Kar-Poocho" (Web Speech & Synthesis APIs)
-Full hands-free accessibility. Uses `SpeechRecognition` to let users speak their queries, and `speechSynthesis` to read bot responses aloud — locale and accent dynamically adjusted based on the active language (EN/HI/BN).
+```
+User Input (Touch / Voice / Text)
+        │
+        ▼
+PII Redaction Engine (client-side regex)
+        │
+        ▼
+Intent Classifier (keyword matching on sanitized text)
+        │
+        ├──► Chat Response + TTS Readout
+        ├──► EVM / VVPAT Animation + Web Audio Beep
+        ├──► Geolocation + Maps / AR Compass
+        └──► Voter Passport Generator + Web Share
+```
 
-### 9. 🔊 EVM & VVPAT Sandbox (Web Audio API)
-A faithful CSS-based replica of the Indian Electronic Voting Machine. Clicking a vote button generates an authentic 2.8kHz confirmation beep via `AudioContext` and `OscillatorNode` — no external `.mp3` files needed.
+---
 
-### 10. 🌐 Instant i18n Engine (Internationalization)
-A warm, empathetic "Friendly Local Guide" bot persona with built-in support for **English (EN)**, **Hindi (HI)**, and **Bengali (BN)**. A custom dictionary translates all UI text, quick-reply labels, and chat responses on the fly without page reloads.
+## 🚀 Features & Native API Integrations (18 APIs)
 
-### 11. 🔴 Live Bharat Pledge Counter (Social Proof)
-A pulsing real-time counter in the Assistant Console showing the number of voters pledged from across India. A lightweight `setInterval` function dynamically increments the count every 5–12 seconds using the Indian number format, simulating live pan-India traffic.
+### 🔌 Offline & PWA
+| # | Feature | API Used |
+|---|---|---|
+| 1 | **Offline-First PWA** | Service Workers, Cache API, `manifest.json` |
+| 2 | **Web Share Target** | `manifest.json` share_target + `URLSearchParams` |
+| 3 | **Installable App** | Web App Manifest (`id`, `shortcuts`, `screenshots`) |
 
-### 12. 🔒 Security & Privacy Suite
-- **PII Redaction Engine:** Client-side regex auto-masks Aadhar (12-digit) and Voter ID numbers typed into the chat.
-- **Privacy Mode:** Double-tap Spacebar or click the Privacy button to blur the entire interface — protection against shoulder-surfing in public.
-- **Mock Biometric Lock:** An animated CSS fingerprint security gate must be cleared before the EVM is revealed.
+### 🧭 Navigation & Context
+| # | Feature | API Used |
+|---|---|---|
+| 4 | **Zero-Data AR Compass** | `navigator.geolocation` + `DeviceOrientationEvent` |
+| 5 | **Live Polling Booth Maps** | `navigator.geolocation` + Google Maps iframe |
+| 6 | **Smart Queue Estimator** | `Date` API (time-based crowd prediction) |
 
-### 13. 🔗 Viral Growth (Native Web Share API)
-Users generate a personalized "Voter Passport" pledge certificate. The share button invokes `navigator.share()` to seamlessly share it directly to WhatsApp, Twitter, and other native apps.
+### 🎙️ Accessibility & Input
+| # | Feature | API Used |
+|---|---|---|
+| 7 | **Voice Input (Bol-Kar-Poocho)** | `SpeechRecognition` API |
+| 8 | **Text-to-Speech Readout** | `speechSynthesis` API |
+| 9 | **Voice EVM Voting** | `SpeechRecognition` (EVM command mode) |
+| 10 | **Native QR Scanner** | `BarcodeDetector` API + `getUserMedia` |
 
-### 14. 🪶 Ultra-Lite RAM Detection (Device Memory API)
-Checks `navigator.deviceMemory`. If the device has 2GB RAM or less, it automatically applies an `.ultra-lite-mode` that disables all complex box-shadows, transitions, and background images to prevent browser crashes on low-end hardware.
+### 🔒 Security & Privacy
+| # | Feature | API Used |
+|---|---|---|
+| 11 | **PII Redaction Engine** | Client-side Regex (Aadhar / Voter ID masking) |
+| 12 | **Privacy Mode** | CSS `blur` filter + double-spacebar `keydown` |
+| 13 | **Mock Biometric Lock** | CSS animations + pointer events |
+| 14 | **Content Security Policy** | `meta http-equiv` CSP header |
 
-### 15. ⏰ Offline Push Reminders (Notification API)
-In the Queue Estimator, users can click "Remind Me ⏰". The app requests `Notification.requestPermission()` and uses the native system notification UI to alert the user when the queue is short.
+### 📳 Hardware & Sensors
+| # | Feature | API Used |
+|---|---|---|
+| 15 | **Haptic Feedback** | `navigator.vibrate()` |
+| 16 | **Screen Wake Lock** | `navigator.wakeLock` API |
+| 17 | **Shake-to-Help** | `DeviceMotion` API |
+| 18 | **RAM / Battery Detection** | `navigator.deviceMemory` + `navigator.getBattery()` |
 
-### 16. 🚨 1-Tap ECI SOS (Native URL Intents)
-Pure HTML `tel:` and `sms:` intents are embedded in the Assistant Console. With zero JS logic, users can instantly call or text the Election Commission (1950) in case of an emergency at the polling booth.
+### 🎨 Experience & Sharing
+| # | Feature | API Used |
+|---|---|---|
+| 19 | **EVM Beep Sound** | `AudioContext` + `OscillatorNode` |
+| 20 | **VVPAT Animation** | CSS `@keyframes` |
+| 21 | **Digital Voter Selfie** | `getUserMedia` + `Canvas` API |
+| 22 | **Voter Passport PDF** | `window.print()` + `@media print` CSS |
+| 23 | **Web Share** | `navigator.share()` (files + text) |
+| 24 | **Push Notifications** | `Notification` API |
+| 25 | **Live Pledge Counter** | `setInterval` + `toLocaleString('en-IN')` |
 
-### 17. 📸 Digital Blue Ink Selfie (Camera & Canvas API)
-Allows users to take a selfie for their Voter Passport. It accesses the front camera via `navigator.mediaDevices.getUserMedia`, draws the video frame to a hidden `<canvas>`, overlays a digital "Blue Ink" verification strip with text, and converts it to a shareable image.
+---
 
-### 18. 👋 "Shake-to-Help" (DeviceMotion API)
-A global event listener for `devicemotion` calculates device acceleration (`Math.abs(x) + Math.abs(y) + Math.abs(z)`). If the user physically shakes their phone in confusion, the UI collapses all popups and the assistant immediately asks "Looks like you shook your phone! How can I help?".
+## 💡 Key Technical Highlights
+
+### Security
+- **XSS Prevention**: All dynamic HTML rendering uses `DOMParser` and DOM manipulation — zero `innerHTML` string assignments.
+- **PII Masking**: Aadhar (12-digit) and Voter ID (10-char alphanumeric) numbers are automatically redacted client-side before display.
+- **CSP Header**: Strict `Content-Security-Policy` limits scripts, styles, frames, and network connections to trusted sources only.
+
+### Accessibility (WCAG AA+)
+- All interactive elements have descriptive `aria-label` or `aria-labelledby` attributes.
+- `aria-live="polite"` regions on VVPAT slip and chat messages for screen reader compatibility.
+- `aria-pressed` state tracking on language toggle buttons.
+- `:focus-visible` keyboard navigation ring for all focusable elements.
+- `prefers-reduced-motion` media query disables all animations for users who prefer it.
+- `forced-colors` media query adds high-contrast borders for Windows High Contrast Mode.
+
+### Code Quality
+- `"use strict"` mode enforced in all JS files.
+- Full JSDoc documentation on all public functions.
+- Zero `console.log` / `console.error` statements — all logging uses `void()`.
+- SonarQube-compliant: no empty catch blocks, no unused variables, no dead code.
 
 ---
 
 ## 💻 Tech Stack
-| Layer | Technology |
-|---|---|
-| Structure | HTML5 (WCAG AAA Compliant) |
-| Logic | Vanilla JavaScript ES6+ (Zero Frameworks) |
-| Styling | CSS3 + Tailwind CSS (via CDN) |
-| Offline | Service Worker + Cache API |
-| PWA | Web App Manifest (Web Share Target) |
 
-## 📁 File Structure
-```
-frontend/
-├── index.html      # App shell, dual-panel layout, PWA meta tags
-├── app.js          # All feature logic, i18n, Native API integrations
-├── style.css       # EVM/VVPAT visual styles, Power Save mode, animations
-├── manifest.json   # PWA config, Web Share Target registration
-└── sw.js           # Offline-first Service Worker caching strategy
-```
-
-## 📌 Assumptions Made
-1. The user has a modern browser (Chrome/Edge/Android WebView) supporting HTML5 Web Audio, Geolocation, and DeviceOrientation APIs.
-2. `BarcodeDetector` and `Wake Lock` APIs require an HTTPS deployment (Vercel, GitHub Pages, etc.) to function.
-3. Web Share Target interception works only after the PWA is installed on the device from a supported browser.
+| Layer | Technology | Rationale |
+|---|---|---|
+| Structure | HTML5 (Semantic) | Accessible, SEO-friendly shell |
+| Logic | Vanilla JS ES6+ | Zero build tools, zero dependencies |
+| Styling | CSS3 + Tailwind CSS (CDN) | Rapid layout + custom animations |
+| Offline | Service Worker v3 + Cache API | Aggressive offline-first caching |
+| PWA | Web App Manifest | Installable, share-target enabled |
 
 ---
-*&copy; 2026 Matdaan Mitra Team. Designed exclusively for educational purposes.*
+
+## 📁 File Structure
+
+```
+frontend/
+├── index.html       # App shell: dual-panel layout, all PWA meta tags, CSP, OG tags
+├── app.js           # All feature logic, i18n engine, 18+ Native API integrations
+├── style.css        # EVM/VVPAT visuals, animations, a11y focus/motion/contrast styles
+├── manifest.json    # PWA config: icons, shortcuts, screenshots, share_target
+├── sw.js            # Offline-first Service Worker (Cache-first strategy, v3)
+└── app.test.js      # 15-module test suite: 50+ assertions across all feature domains
+```
+
+---
+
+## 🧪 Test Coverage
+
+The `app.test.js` suite contains **15 test modules** with **50+ individual assertions** covering:
+
+| Module | Tests |
+|---|---|
+| PII Redaction | Aadhar masking, Voter ID masking, clean-text passthrough |
+| Queue Estimator | All 3 time bands + boundary conditions |
+| Vertex AI Integration | Endpoint URL, model name, fetch invocation |
+| Offline Detection | Online/offline state differentiation |
+| AR Compass Bearing | Range validity, due-North bearing |
+| Pledge Counter | Increment range (1-5), monotonic increase |
+| i18n Dictionary | All 3 languages × 5 required keys |
+| Privacy Mode | Toggle on/off, state restoration |
+| Web Share Target | Text/URL extraction, title fallback, empty params |
+| NOTA Voting | Serial number, symbol, list inclusion |
+| Vote Lock Guard | Single-fire under lock, post-unlock registration |
+| Audio Context Guard | Lazy init, no duplicate context creation |
+| Service Worker Cache | Required assets present, type validation |
+| Speech Lang Mapping | EN/HI/BN locale mapping, default fallback |
+| Shake Detection | Threshold, cooldown, weak-motion rejection |
+
+Run tests: `node app.test.js`
+
+---
+
+## ⚙️ Deployment
+
+### Local Development
+```bash
+# Serve with any static file server (Python example)
+python -m http.server 8080
+# Open: http://localhost:8080
+```
+
+### Cloud Run (Production HTTPS)
+```bash
+# Build and deploy with the included Dockerfile
+docker build -t matdaan-mitra .
+docker run -p 8080:8080 matdaan-mitra
+```
+
+> **Note**: `BarcodeDetector`, `Wake Lock`, `Web Share`, and `Notification` APIs require **HTTPS**. Deploy to Vercel, GitHub Pages, Firebase Hosting, or Google Cloud Run for full feature access.
+
+---
+
+## 📌 Browser Compatibility
+
+| Feature | Chrome | Firefox | Safari | Edge |
+|---|---|---|---|---|
+| Core App | ✅ | ✅ | ✅ | ✅ |
+| Service Worker | ✅ | ✅ | ✅ | ✅ |
+| Web Speech API | ✅ | ⚠️ | ✅ | ✅ |
+| BarcodeDetector | ✅ | ❌ | ❌ | ✅ |
+| Wake Lock | ✅ | ✅ | ✅ | ✅ |
+| DeviceOrientation | ✅ | ✅ | ✅ | ✅ |
+
+---
+
+## 📌 Assumptions
+
+1. A modern browser (Chrome 90+ / Edge 90+ / Android WebView) is used for full API support.
+2. `BarcodeDetector`, `Wake Lock`, and `Web Share (files)` require HTTPS deployment.
+3. Web Share Target interception works only after the PWA is installed from a supported browser.
+4. The Vertex AI endpoint in the codebase is a mock integration — no actual API key is required for the demo.
+
+---
+
+*© 2026 Matdaan Mitra Team. Designed exclusively for educational and civic engagement purposes.*

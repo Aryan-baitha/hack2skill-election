@@ -1,65 +1,71 @@
-const CACHE_NAME = 'matdaan-mitra-v1';
+/* eslint-disable no-restricted-globals */
+"use strict";
+
+/** @type {string} Cache name — bump version to force refresh on deploy */
+const CACHE_NAME = 'matdaan-mitra-v3';
+
+/** @type {string[]} Core assets to pre-cache on service worker install */
 const ASSETS_TO_CACHE = [
-  './',
-  './index.html',
-  './style.css',
-  './app.js',
-  './manifest.json'
+    './',
+    './index.html',
+    './style.css',
+    './app.js',
+    './manifest.json'
 ];
 
-// Install event: Cache essential assets
+/**
+ * Install event: Pre-cache all essential application shell assets.
+ * skipWaiting() forces the new SW to activate immediately without waiting.
+ */
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
-  );
-  // Force the waiting service worker to become the active service worker.
-  self.skipWaiting();
+    event.waitUntil(
+        caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE))
+    );
+    self.skipWaiting();
 });
 
-// Activate event: Clean up old caches if any
+/**
+ * Activate event: Purge all stale caches from previous SW versions.
+ * clients.claim() lets this SW take control of all pages immediately.
+ */
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
-  );
-  // Take control of all pages immediately
-  self.clients.claim();
+    event.waitUntil(
+        caches.keys().then((cacheNames) =>
+            Promise.all(
+                cacheNames
+                    .filter((name) => name !== CACHE_NAME)
+                    .map((name) => caches.delete(name))
+            )
+        )
+    );
+    self.clients.claim();
 });
 
-// Fetch event: Offline-first strategy
+/**
+ * Fetch event: Cache-first strategy for GET requests.
+ * Falls back to network; caches dynamic responses for future offline use.
+ * Serves index.html for offline navigation requests (SPA fallback).
+ */
 self.addEventListener('fetch', (event) => {
-  // Only intercept GET requests
-  if (event.request.method !== 'GET') return;
-  
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      // Offline-first: return cached response if available
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      
-      // Fallback to network
-      return fetch(event.request).then((networkResponse) => {
-        // Cache the dynamically fetched resource for next time
-        return caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, networkResponse.clone());
-          return networkResponse;
-        });
-      }).catch(() => {
-        // Provide fallback response if totally offline and resource isn't cached
-        if (event.request.mode === 'navigate') {
-          return caches.match('./index.html');
-        }
-      });
-    })
-  );
+    if (event.request.method !== 'GET') { return; }
+
+    event.respondWith(
+        caches.match(event.request).then((cachedResponse) => {
+            if (cachedResponse) {
+                return cachedResponse;
+            }
+
+            return fetch(event.request).then((networkResponse) =>
+                caches.open(CACHE_NAME).then((cache) => {
+                    cache.put(event.request, networkResponse.clone());
+                    return networkResponse;
+                })
+            ).catch(() => {
+                if (event.request.mode === 'navigate') {
+                    return caches.match('./index.html');
+                }
+                return new Response('', { status: 408, statusText: 'Offline' });
+            });
+        })
+    );
 });

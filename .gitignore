@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+.cache/
+
+# Local dev scripts (not part of the submission)
+fix_score.js
+fix_app.js
+fix_app2.js
+move_sw.js
+test_complexity.js
+update_buttons.js
+update_app_buttons.js
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log

@@ -1,0 +1,32 @@
+# Exclude development and test files from Docker build context
+# This reduces image size and prevents sensitive files from being exposed
+
+# Version control
+.git
+.gitignore
+
+# Development/test files
+app.test.js
+fix_score.js
+*.test.js
+*.spec.js
+
+# Node artifacts (if any)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Editor configs
+.vscode/
+.idea/
+*.code-workspace
+
+# Documentation (not needed in production image)
+README.md

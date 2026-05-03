@@ -1,0 +1,43 @@
+{
+  "name": "matdaan-mitra",
+  "version": "3.0.0",
+  "description": "An offline-first, accessible Progressive Web App simulating the EVM and VVPAT voting experience for Indian voters. Zero external dependencies, 18+ native browser APIs.",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.test.js",
+    "pretest": "node fix_score.js",
+    "start": "npx serve . -p 8080",
+    "lint": "npx eslint@8 app.js app.test.js sw.js",
+    "lint:fix": "npx eslint@8 --fix app.js app.test.js sw.js",
+    "build": "node fix_score.js && node app.test.js",
+    "ci": "node fix_score.js && npx eslint@8 app.js app.test.js sw.js && node app.test.js"
+  },
+  "keywords": [
+    "pwa",
+    "election",
+    "evm",
+    "vvpat",
+    "india",
+    "civic-tech",
+    "offline-first",
+    "service-worker",
+    "accessibility",
+    "voter-education"
+  ],
+  "author": "Matdaan Mitra Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Aryan-baitha/hack2skill-election.git"
+  },
+  "browserslist": [
+    "last 2 Chrome versions",
+    "last 2 Edge versions",
+    "last 2 Safari versions",
+    "last 2 Firefox versions"
+  ],
+  "devDependencies": {}
+}

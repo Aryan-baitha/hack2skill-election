@@ -2,16 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://us-central1-aiplatform.googleapis.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; frame-src https://www.google.com https://maps.google.com; connect-src 'self' https://us-central1-aiplatform.googleapis.com;">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Essential meta tags for SEO and responsiveness -->
-    <meta name="description" content="Matdaan Mitra 🇮🇳 (मतदान मित्र) - A highly interactive, accessible educational tool simulating the EVM and VVPAT voting experience.">
-    <title>Matdaan Mitra 🇮🇳 (मतदान मित्र)</title>
+    <meta name="description" content="Matdaan Mitra - A highly interactive, accessible educational tool simulating the EVM and VVPAT voting experience for Indian voters.">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Matdaan Mitra Team">
+    <meta name="keywords" content="EVM simulator, VVPAT, Indian election, voting education, PWA, Matdaan Mitra">
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Matdaan Mitra - Interactive EVM & VVPAT Simulator">
+    <meta property="og:description" content="Learn how to vote securely with India's most interactive EVM and VVPAT simulator. Built as an offline-first PWA.">
+    <meta property="og:locale" content="en_IN">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Matdaan Mitra - Interactive EVM & VVPAT Simulator">
+    <meta name="twitter:description" content="Learn how to vote securely with India's most interactive EVM and VVPAT simulator.">
+    <title>Matdaan Mitra - Interactive EVM & VVPAT Voting Simulator</title>
     
     <!-- PWA Manifest & Theme -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1e3a8a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzFlM2E4YSIvPjx0ZXh0IHg9IjUwIiB5PSI2NSIgZm9udC1zaXplPSI1MCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiNmZmYiPlY8L3RleHQ+PC9zdmc+">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzFlM2E4YSIvPjx0ZXh0IHg9IjUwIiB5PSI2NSIgZm9udC1zaXplPSI1MCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiNmZmYiPlY8L3RleHQ+PC9zdmc+">
     
     <!-- Tailwind CSS via CDN for styling layout and basic elements -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,6 +35,11 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-gray-50 text-gray-900 font-sans min-h-screen flex flex-col">
+    <noscript>
+        <div style="background-color: #fef2f2; border: 1px solid #f87171; color: #991b1b; padding: 1rem; margin: 1rem; border-radius: 0.5rem; text-align: center; font-weight: bold;">
+            Please enable JavaScript to use the Matdaan Mitra EVM & VVPAT Simulator. This PWA requires JavaScript to function.
+        </div>
+    </noscript>
 
     <!-- Accessible Header with Language Toggle Placeholder -->
     <header class="bg-blue-900 text-white p-4 shadow-md flex justify-between items-center z-10 sticky top-0">
@@ -31,19 +51,19 @@
         
         <!-- Language Toggle Placeholder demonstrating inclusive design -->
         <nav aria-label="Language selection" class="flex items-center space-x-4">
-            <button id="privacy-toggle-btn" class="text-blue-100 hover:text-white focus:outline-none flex flex-col items-center justify-center transition" aria-label="Toggle Privacy Mode">
+            <button type="button" id="privacy-toggle-btn" class="text-blue-100 hover:text-white focus:outline-none flex flex-col items-center justify-center transition" aria-label="Toggle Privacy Mode">
                 <span class="text-lg">👁️</span>
                 <span class="text-[10px] uppercase font-bold">Privacy</span>
             </button>
             <ul class="flex space-x-2 bg-blue-800 rounded-lg p-1">
                 <li>
-                    <button class="lang-btn px-3 py-1 bg-white text-blue-900 font-semibold rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300" data-lang="en" aria-pressed="true" aria-label="Switch to English">EN</button>
+                    <button type="button" class="lang-btn px-3 py-1 bg-white text-blue-900 font-semibold rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300" data-lang="en" aria-pressed="true" aria-label="Switch to English">EN</button>
                 </li>
                 <li>
-                    <button class="lang-btn px-3 py-1 text-blue-100 hover:text-white font-medium rounded focus:outline-none focus:ring-2 focus:ring-blue-300" data-lang="hi" aria-pressed="false" aria-label="Switch to Hindi">HI</button>
+                    <button type="button" class="lang-btn px-3 py-1 text-blue-100 hover:text-white font-medium rounded focus:outline-none focus:ring-2 focus:ring-blue-300" data-lang="hi" aria-pressed="false" aria-label="Switch to Hindi">HI</button>
                 </li>
                 <li>
-                    <button class="lang-btn px-3 py-1 text-blue-100 hover:text-white font-medium rounded focus:outline-none focus:ring-2 focus:ring-blue-300" data-lang="bn" aria-pressed="false" aria-label="Switch to Bengali">BN</button>
+                    <button type="button" class="lang-btn px-3 py-1 text-blue-100 hover:text-white font-medium rounded focus:outline-none focus:ring-2 focus:ring-blue-300" data-lang="bn" aria-pressed="false" aria-label="Switch to Bengali">BN</button>
                 </li>
             </ul>
         </nav>
@@ -110,7 +130,7 @@
             <div id="simulator-container" class="flex flex-col lg:flex-row gap-6 justify-center items-center lg:items-stretch w-full transition-opacity duration-300 relative">
                 
                 <!-- Mock Biometric Lock Overlay (Robust Rewrite) -->
-                <button id="biometric-overlay" class="absolute inset-0 w-full h-full bg-white/95 backdrop-blur-md z-50 flex flex-col items-center justify-center rounded-xl border border-gray-200 transition-opacity duration-500 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-500 m-0 p-0 shadow-2xl" aria-label="Tap anywhere to verify identity">
+                <button type="button" id="biometric-overlay" class="absolute inset-0 w-full h-full bg-white/95 backdrop-blur-md z-50 flex flex-col items-center justify-center rounded-xl border border-gray-200 transition-opacity duration-500 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-500 m-0 p-0 shadow-2xl" aria-label="Tap anywhere to verify identity">
                     <div class="relative w-24 h-24 flex items-center justify-center mb-4">
                         <!-- Fingerprint SVG Icon -->
                         <svg class="w-20 h-20 text-blue-500 transition duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -156,7 +176,7 @@
                             <!-- LED indicator (Red light when voted) -->
                             <div class="led-indicator w-3 h-3 rounded-full" aria-label="Voting indicator light"></div>
                             <!-- Blue Voting Button -->
-                            <button class="evm-vote-btn evm-button w-10 h-10 rounded-full flex-shrink-0 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-1" 
+                            <button type="button" class="evm-vote-btn evm-button w-10 h-10 rounded-full flex-shrink-0 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-1" 
                                     data-candidate="Candidate A" data-symbol="🍎" data-serial="1"
                                     aria-label="Vote for Candidate A">
                             </button>
@@ -173,7 +193,7 @@
                         </div>
                         <div class="w-20 flex items-center justify-between pl-2">
                             <div class="led-indicator w-3 h-3 rounded-full" aria-label="Voting indicator light"></div>
-                            <button class="evm-vote-btn evm-button w-10 h-10 rounded-full flex-shrink-0 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-1"
+                            <button type="button" class="evm-vote-btn evm-button w-10 h-10 rounded-full flex-shrink-0 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-1"
                                     data-candidate="Candidate B" data-symbol="☂️" data-serial="2"
                                     aria-label="Vote for Candidate B">
                             </button>
@@ -189,7 +209,7 @@
                         </div>
                         <div class="w-20 flex items-center justify-between pl-2">
                             <div class="led-indicator w-3 h-3 rounded-full" aria-label="Voting indicator light"></div>
-                            <button class="evm-vote-btn evm-button w-10 h-10 rounded-full flex-shrink-0 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-1"
+                            <button type="button" class="evm-vote-btn evm-button w-10 h-10 rounded-full flex-shrink-0 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-1"
                                     data-candidate="Candidate C" data-symbol="🚲" data-serial="3"
                                     aria-label="Vote for Candidate C">
                             </button>
@@ -205,7 +225,7 @@
                         </div>
                         <div class="w-20 flex items-center justify-between pl-2">
                             <div class="led-indicator w-3 h-3 rounded-full" aria-label="Voting indicator light"></div>
-                            <button class="evm-vote-btn evm-button w-10 h-10 rounded-full flex-shrink-0 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-1"
+                            <button type="button" class="evm-vote-btn evm-button w-10 h-10 rounded-full flex-shrink-0 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-1"
                                     data-candidate="Candidate D" data-symbol="🐘" data-serial="4"
                                     aria-label="Vote for Candidate D">
                             </button>
@@ -221,7 +241,7 @@
                         </div>
                         <div class="w-20 flex items-center justify-between pl-2">
                             <div class="led-indicator w-3 h-3 rounded-full" aria-label="Voting indicator light"></div>
-                            <button class="evm-vote-btn evm-button w-10 h-10 rounded-full flex-shrink-0 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-1"
+                            <button type="button" class="evm-vote-btn evm-button w-10 h-10 rounded-full flex-shrink-0 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-1"
                                     data-candidate="Candidate E" data-symbol="🌻" data-serial="5"
                                     aria-label="Vote for Candidate E">
                             </button>
@@ -237,7 +257,7 @@
                         </div>
                         <div class="w-20 flex items-center justify-between pl-2">
                             <div class="led-indicator w-3 h-3 rounded-full" aria-label="Voting indicator light"></div>
-                            <button class="evm-vote-btn evm-button w-10 h-10 rounded-full flex-shrink-0 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-1"
+                            <button type="button" class="evm-vote-btn evm-button w-10 h-10 rounded-full flex-shrink-0 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-1"
                                     data-candidate="Candidate F" data-symbol="⚽" data-serial="6"
                                     aria-label="Vote for Candidate F">
                             </button>
@@ -254,7 +274,7 @@
                         </div>
                         <div class="w-20 flex items-center justify-between pl-2">
                             <div class="led-indicator w-3 h-3 rounded-full" aria-label="Voting indicator light"></div>
-                            <button class="evm-vote-btn evm-button w-10 h-10 rounded-full flex-shrink-0 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-1"
+                            <button type="button" class="evm-vote-btn evm-button w-10 h-10 rounded-full flex-shrink-0 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-1"
                                     data-candidate="NOTA" data-symbol="✕" data-serial="7"
                                     aria-label="Vote for None of the Above (NOTA)">
                             </button>
@@ -304,7 +324,7 @@
                 <!-- Share Certificate UI (Hidden initially) -->
                 <div id="share-cert-ui" class="hidden absolute bottom-20 left-0 right-0 mx-4 bg-green-50 border border-green-200 rounded p-3 text-center shadow-lg z-20 animate-fade-in">
                     <p class="text-xs font-bold text-green-800 mb-2">Vote Successfully Cast!</p>
-                    <button id="share-pledge-btn" class="bg-green-600 text-white text-xs px-3 py-1.5 rounded shadow hover:bg-green-700 transition w-full font-bold flex items-center justify-center gap-1 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1">
+                    <button type="button" id="share-pledge-btn" class="bg-green-600 text-white text-xs px-3 py-1.5 rounded shadow hover:bg-green-700 transition w-full font-bold flex items-center justify-center gap-1 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
                         Share My Pledge
                     </button>
@@ -324,18 +344,19 @@
             <div id="maps-container" class="hidden absolute inset-0 bg-white rounded-xl shadow-lg border border-gray-200 p-4 flex flex-col z-20">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-bold text-gray-800">Your Polling Station</h3>
-                    <button id="close-maps-btn" class="text-gray-500 hover:text-red-500 transition focus:outline-none p-1 rounded" aria-label="Close Map">
+                    <button type="button" id="close-maps-btn" class="text-gray-500 hover:text-red-500 transition focus:outline-none p-1 rounded" aria-label="Close Map">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
                 <div class="flex-grow bg-gray-100 rounded-lg overflow-hidden relative">
                     <!-- Google Maps Iframe Placeholder (Using standard generic Delhi embed as dummy) -->
                     <iframe 
+                        title="Map showing your nearest polling station in New Delhi"
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14008.11482718424!2d77.2065321689258!3d28.613939100000003!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfd5b34cb53d1%3A0xcab57e0cc1951563!2sNew%20Delhi%2C%20Delhi!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
                         width="100%" 
                         height="100%" 
                         style="border:0;" 
-                        allowfullscreen="" 
+                        allowfullscreen=""
                         loading="lazy" 
                         referrerpolicy="no-referrer-when-downgrade">
                     </iframe>
@@ -344,7 +365,7 @@
 
             <!-- AR Compass Placeholder (Hidden by default) -->
             <div id="ar-compass-container" class="hidden absolute inset-0 bg-white rounded-xl shadow-lg border border-gray-200 p-6 flex flex-col items-center justify-center z-20">
-                <button id="close-compass-btn" class="absolute top-4 right-4 text-gray-500 hover:text-red-500 transition focus:outline-none p-1 rounded" aria-label="Close Compass">
+                <button type="button" id="close-compass-btn" class="absolute top-4 right-4 text-gray-500 hover:text-red-500 transition focus:outline-none p-1 rounded" aria-label="Close Compass">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
                 <h3 class="font-bold text-gray-800 mb-2">AR Booth Locator</h3>
@@ -389,7 +410,7 @@
                     <div class="w-24 h-24 bg-gray-100 rounded-full mx-auto mb-3 border-4 border-blue-500 flex items-center justify-center text-4xl shadow-inner relative overflow-hidden" id="selfie-container">
                         <span id="selfie-placeholder">👤</span>
                         <video id="selfie-video" class="hidden absolute inset-0 w-full h-full object-cover" autoplay playsinline></video>
-                        <img id="selfie-img" class="hidden absolute inset-0 w-full h-full object-cover" alt="Voter Selfie">
+                        <img id="selfie-img" class="hidden absolute inset-0 w-full h-full object-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Voter Selfie">
                     </div>
                     <canvas id="selfie-canvas" class="hidden"></canvas>
                     <p class="font-bold text-xl text-gray-800" id="passport-name">Proud Indian Voter</p>
@@ -402,11 +423,11 @@
             </div>
         </div>
         <div class="mt-6 flex flex-wrap justify-center gap-4 no-print z-50">
-            <button id="start-selfie-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-blue-700 transition font-bold focus:outline-none focus:ring-4 focus:ring-blue-300">📸 Take Voter Selfie</button>
-            <button id="capture-selfie-btn" class="hidden bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-red-700 transition font-bold focus:outline-none focus:ring-4 focus:ring-red-300">🔴 Capture</button>
-            <button id="share-selfie-btn" class="hidden bg-purple-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-purple-700 transition font-bold focus:outline-none focus:ring-4 focus:ring-purple-300">🔗 Share Selfie</button>
-            <button id="save-pdf-btn" class="bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg hover:bg-green-700 transition font-bold focus:outline-none focus:ring-4 focus:ring-green-300">📄 Save as PDF</button>
-            <button id="close-passport-btn" class="bg-gray-200 text-gray-800 px-6 py-2 rounded-lg shadow-lg hover:bg-gray-300 transition font-bold focus:outline-none focus:ring-4 focus:ring-gray-300">Close</button>
+            <button type="button" id="start-selfie-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-blue-700 transition font-bold focus:outline-none focus:ring-4 focus:ring-blue-300">📸 Take Voter Selfie</button>
+            <button type="button" id="capture-selfie-btn" class="hidden bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-red-700 transition font-bold focus:outline-none focus:ring-4 focus:ring-red-300">🔴 Capture</button>
+            <button type="button" id="share-selfie-btn" class="hidden bg-purple-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-purple-700 transition font-bold focus:outline-none focus:ring-4 focus:ring-purple-300">🔗 Share Selfie</button>
+            <button type="button" id="save-pdf-btn" class="bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg hover:bg-green-700 transition font-bold focus:outline-none focus:ring-4 focus:ring-green-300">📄 Save as PDF</button>
+            <button type="button" id="close-passport-btn" class="bg-gray-200 text-gray-800 px-6 py-2 rounded-lg shadow-lg hover:bg-gray-300 transition font-bold focus:outline-none focus:ring-4 focus:ring-gray-300">Close</button>
         </div>
     </div>
 
